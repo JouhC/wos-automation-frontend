@@ -2,8 +2,9 @@ import requests
 import pandas as pd
 import streamlit as st
 import os
-from dotenv import load_dotenv
-if not os.getenv("PROD"): load_dotenv()  # Load .env file in local development
+if not bool(os.getenv("PROD")):
+    from dotenv import load_dotenv
+    load_dotenv()  # Load .env file in local development
 from utils.methods import GiftCodeRedemptionAPI
 
 URL = os.getenv("URL")
