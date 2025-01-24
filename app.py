@@ -4,7 +4,7 @@ import streamlit as st
 import os
 if not bool(os.getenv("PROD")):
     from dotenv import load_dotenv
-    load_dotenv()  # Load .env file in local development
+    load_dotenv(override=True)  # Load .env file in local development
 from utils.methods import GiftCodeRedemptionAPI
 
 URL = os.getenv("URL")
