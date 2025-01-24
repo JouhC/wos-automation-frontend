@@ -22,12 +22,19 @@ def add_player_callback():
     else:
         st.error("Player ID cannot be empty.")
 
+def map_status_to_icon(status):
+    if status == 1:
+        return "✅"  # Check icon
+    else:
+        return "❌"  # X icon
+
 # Load player data
 def load_player_data():
     response = api.list_players()
     players = pd.DataFrame(response['players'])
 
-    data = players[['avatar_image', 'nickname', 'stove_lv', 'kid']]
+    data = players[['avatar_image', 'nickname', 'stove_lv', 'kid', 'redeemed_all']]
+    data.loc[:, "redeemed_all"] = data["redeemed_all"].apply(map_status_to_icon)
     data = data.reset_index(drop=True)
 
     return data, players['fid'].tolist()
@@ -80,7 +87,7 @@ with st.sidebar:
     st.text_input("Add a Player to Subscribe", key="new_player", help="*Check your Player ID in-game through your Avatar on the top left corner")
     st.button("Add Player!", on_click=add_player_callback)
     st.button("Fetch Gift Codes", on_click=fetch_giftcodes_callback)
-    st.button("Apply Gift Codes to Players", on_click=redeem_giftcodes_callback, args=[players])
+    st.button("Apply Gift Codes to All Players", on_click=redeem_giftcodes_callback, args=[players])
 
 # Split layout into two columns with adjusted proportions
 col1, col2 = st.columns([3, 2])  # Wider column for players, narrower for gift codes
@@ -92,7 +99,8 @@ with col1:
         "avatar_image": st.column_config.ImageColumn(label=""),
         "nickname": st.column_config.TextColumn(label="Nickname"),
         "stove_lv": st.column_config.TextColumn(label="Stove Lv. 💬", help="📍**Furnace Level**"),
-        "kid": st.column_config.TextColumn(label="State 💬", help="📍**State Number**")
+        "kid": st.column_config.TextColumn(label="State 💬", help="📍**State Number**"),
+        "redeemed_all": st.column_config.TextColumn(label="Redeemed?", help="📍**If the player redeemed all the gift codes.**")
     })
 
 # Right Column: Display Gift Codes
