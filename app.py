@@ -28,6 +28,7 @@ def map_status_to_icon(status):
     else:
         return "❌"  # X icon
 
+@st.cache_data
 # Load player data
 def load_player_data():
     response = api.list_players()
@@ -39,6 +40,7 @@ def load_player_data():
 
     return data, players['fid'].tolist()
 
+@st.cache_data
 # Load gift codes
 def load_giftcodes():
     response = api.list_giftcodes()
@@ -72,7 +74,7 @@ if "reload_data" not in st.session_state:
 
 # Main Layout
 st.markdown("<h1 style='text-align: left;'>Whiteout Survival Redeem Code Subscription</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: left; font-size: 20px;'>Add your username for subscription!</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: left; font-size: 20px;'>Automatically Redeem Rewards with Official Gift Codes in Whiteout: Survival!</p>", unsafe_allow_html=True)
 st.write("")
 
 # Reload player data if reload_data flag is True
