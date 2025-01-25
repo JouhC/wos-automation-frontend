@@ -13,12 +13,13 @@ api = GiftCodeRedemptionAPI(base_url=URL)
 # Function to handle player creation
 def add_player_callback():
     if st.session_state.new_player:  # Access the new_player value from session_state
-        try:
-            response = api.create_player(player_id=str(st.session_state.new_player))
-            st.success(f"Player '{st.session_state.new_player}' added successfully!")
-            st.session_state.reload_data = True  # Trigger reload of data
-        except Exception as e:
-            st.error(f"Failed to add player: {e}")
+        with st.spinner('Adding player...'):
+            try:
+                response = api.create_player(player_id=str(st.session_state.new_player))
+                st.success(f"Player '{st.session_state.new_player}' added successfully!")
+                st.session_state.reload_data = True  # Trigger reload of data
+            except Exception as e:
+                st.error(f"Failed to add player: {e}")
     else:
         st.error("Player ID cannot be empty.")
 
@@ -31,42 +32,46 @@ def map_status_to_icon(status):
 @st.cache_data
 # Load player data
 def load_player_data():
-    response = api.list_players()
-    players = pd.DataFrame(response['players'])
+    with st.spinner('Loading player data...'):
+        response = api.list_players()
+        players = pd.DataFrame(response['players'])
 
-    data = players[['avatar_image', 'nickname', 'stove_lv', 'kid', 'redeemed_all']]
-    data.loc[:, "redeemed_all"] = data["redeemed_all"].apply(map_status_to_icon)
-    data = data.reset_index(drop=True)
+        data = players[['avatar_image', 'nickname', 'stove_lv', 'kid', 'redeemed_all']]
+        data.loc[:, "redeemed_all"] = data["redeemed_all"].apply(map_status_to_icon)
+        data = data.reset_index(drop=True)
 
-    return data, players['fid'].tolist()
+        return data, players['fid'].tolist()
 
 @st.cache_data
 # Load gift codes
 def load_giftcodes():
-    response = api.list_giftcodes()
-    giftcodes = response.get('giftcodes', [])
-    return giftcodes  # List of gift codes
+    with st.spinner('Loading gift codes...'):
+        response = api.list_giftcodes()
+        giftcodes = response.get('giftcodes', [])
+        return giftcodes  # List of gift codes
 
 # Fetch new gift codes
 def fetch_giftcodes_callback():
-    try:
-        api.fetch_giftcodes()
-        st.success("Gift codes fetched successfully!")
-    except Exception as e:
-        st.error(f"Failed to fetch gift codes: {e}")
+    with st.spinner('Fetching gift codes...'):
+        try:
+            api.fetch_giftcodes()
+            st.success("Gift codes fetched successfully!")
+        except Exception as e:
+            st.error(f"Failed to fetch gift codes: {e}")
 
 # Redeem gift codes for all players
 def redeem_giftcodes_callback(players):
-    try:
-        for player_id in players:
-            try:
-                api.redeem_giftcode(player_id=player_id)
-            except Exception as e:
-                st.error(f"Failed to redeem code for player {player_id}: {e}")
+    with st.spinner('Redeeming gift codes...'):
+        try:
+            for player_id in players:
+                try:
+                    api.redeem_giftcode(player_id=player_id)
+                except Exception as e:
+                    st.error(f"Failed to redeem code for player {player_id}: {e}")
 
-        st.success("Gift codes applied to all players!")
-    except Exception as e:
-        st.error(f"Failed to redeem gift codes: {e}")
+            st.success("Gift codes applied to all players!")
+        except Exception as e:
+            st.error(f"Failed to redeem gift codes: {e}")
 
 # Initialize session state variables
 if "reload_data" not in st.session_state:
