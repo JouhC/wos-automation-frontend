@@ -70,6 +70,7 @@ def redeem_giftcodes_callback(players):
                     st.error(f"Failed to redeem code for player {player_id}: {e}")
 
             st.success("Gift codes applied to all players!")
+            st.session_state.reload_data = True  # Trigger reload of data
         except Exception as e:
             st.error(f"Failed to redeem gift codes: {e}")
 
