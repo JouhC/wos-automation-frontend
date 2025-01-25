@@ -29,7 +29,6 @@ def map_status_to_icon(status):
     else:
         return "❌"  # X icon
 
-@st.cache_data
 # Load player data
 def load_player_data():
     with st.spinner('Loading player data...'):
@@ -42,7 +41,6 @@ def load_player_data():
 
         return data, players['fid'].tolist()
 
-@st.cache_data
 # Load gift codes
 def load_giftcodes():
     with st.spinner('Loading gift codes...'):
