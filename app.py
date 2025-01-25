@@ -61,11 +61,7 @@ def fetch_giftcodes_callback():
 def redeem_giftcodes_callback(players):
     with st.spinner('Redeeming gift codes...'):
         try:
-            for player_id in players:
-                try:
-                    api.redeem_giftcode(player_id=player_id)
-                except Exception as e:
-                    st.error(f"Failed to redeem code for player {player_id}: {e}")
+            reponse = api.run_main_logic()
 
             st.success("Gift codes applied to all players!")
             st.session_state.reload_data = True  # Trigger reload of data

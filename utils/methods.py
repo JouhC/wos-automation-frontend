@@ -58,13 +58,9 @@ class GiftCodeRedemptionAPI:
         return self._handle_response(response)
 
     # Automate-all endpoint
-    def run_main_logic(self, subreddit_name, keyword):
+    def run_main_logic(self):
         url = f"{self.base_url}/automate-all/"
-        data = {
-            "subreddit_name": subreddit_name,
-            "keyword": keyword
-        }
-        response = requests.post(url, json=data)
+        response = requests.post(url)
         return self._handle_response(response)
 
 # Example usage
