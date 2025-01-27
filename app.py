@@ -59,7 +59,7 @@ def fetch_giftcodes_callback():
             st.error(f"Failed to fetch gift codes: {e}")
 
 # Redeem gift codes for all players
-def redeem_giftcodes_callback(players):
+def redeem_giftcodes_callback():
     with st.spinner('Redeeming gift codes...'):
         try:
             reponse = api.run_main_logic()
@@ -88,7 +88,7 @@ with st.sidebar:
     st.text_input("Add a Player to Subscribe", key="new_player", help="*Check your Player ID in-game through your Avatar on the top left corner")
     st.button("Add Player!", on_click=add_player_callback)
     st.button("Fetch Gift Codes", on_click=fetch_giftcodes_callback)
-    st.button("Apply Gift Codes to All Players", on_click=redeem_giftcodes_callback, args=[players])
+    st.button("Apply Gift Codes to All Players", on_click=redeem_giftcodes_callback)
 
 # Split layout into two columns with adjusted proportions
 col1, col2 = st.columns([3, 2])  # Wider column for players, narrower for gift codes
