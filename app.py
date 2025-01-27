@@ -5,6 +5,7 @@ if not bool(os.getenv("PROD")):
     from dotenv import load_dotenv
     load_dotenv(override=True)  # Load .env file in local development
 from utils.methods import GiftCodeRedemptionAPI
+from streamlit_js_eval import streamlit_js_eval
 
 URL = os.getenv("URL")
 api = GiftCodeRedemptionAPI(base_url=URL)
@@ -30,6 +31,7 @@ def map_status_to_icon(status):
         return "❌"  # X icon
 
 # Load player data
+@st.cache_data
 def load_player_data():
     with st.spinner('Loading player data...'):
         response = api.list_players()
@@ -42,6 +44,7 @@ def load_player_data():
         return data, players['fid'].tolist()
 
 # Load gift codes
+@st.cache_data
 def load_giftcodes():
     with st.spinner('Loading gift codes...'):
         response = api.list_giftcodes()
@@ -69,12 +72,17 @@ def redeem_giftcodes_callback():
         except Exception as e:
             st.error(f"Failed to redeem gift codes: {e}")
 
+def reload_data_callback():
+    streamlit_js_eval(js_expressions="parent.window.location.reload()")
+    st.session_state.reload_data = True
+
 # Main Layout
 st.markdown("<h1 style='text-align: left;'>Whiteout Survival Redeem Code Subscription</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: left; font-size: 20px;'>Automatically Redeem Rewards with Official Gift Codes in Whiteout: Survival!</p>", unsafe_allow_html=True)
 st.write("")
 
 if st.session_state.reload_data:
+    st.cache_data.clear()
     player_data, players = load_player_data()
     giftcodes = load_giftcodes()
     st.session_state.reload_data = False
@@ -92,6 +100,9 @@ col1, col2 = st.columns([3, 2])  # Wider column for players, narrower for gift c
 # Left Column: Display Players
 with col1:
     st.subheader("Subscribed Players")
+
+    st.button("Reload Data", icon=":material/refresh:", on_click=reload_data_callback)
+
     st.dataframe(player_data, hide_index=True, column_config={
         "avatar_image": st.column_config.ImageColumn(label=""),
         "nickname": st.column_config.TextColumn(label="Nickname"),
