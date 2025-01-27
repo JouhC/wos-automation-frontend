@@ -53,6 +53,7 @@ def fetch_giftcodes_callback():
     with st.spinner('Fetching gift codes...'):
         try:
             api.fetch_giftcodes()
+            st.session_state.reload_data = True  # Trigger reload of data
             st.success("Gift codes fetched successfully!")
         except Exception as e:
             st.error(f"Failed to fetch gift codes: {e}")
@@ -77,12 +78,10 @@ st.markdown("<h1 style='text-align: left;'>Whiteout Survival Redeem Code Subscri
 st.markdown("<p style='text-align: left; font-size: 20px;'>Automatically Redeem Rewards with Official Gift Codes in Whiteout: Survival!</p>", unsafe_allow_html=True)
 st.write("")
 
-# Reload player data if reload_data flag is True
 if st.session_state.reload_data:
     player_data, players = load_player_data()
+    giftcodes = load_giftcodes()
     st.session_state.reload_data = False
-else:
-    player_data, players = load_player_data()
 
 # Sidebar input for adding a player
 with st.sidebar:
