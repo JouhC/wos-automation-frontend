@@ -1,4 +1,3 @@
-import requests
 import pandas as pd
 import streamlit as st
 import os
@@ -9,6 +8,7 @@ from utils.methods import GiftCodeRedemptionAPI
 
 URL = os.getenv("URL")
 api = GiftCodeRedemptionAPI(base_url=URL)
+st.session_state.reload_data = True
 
 # Function to handle player creation
 def add_player_callback():
