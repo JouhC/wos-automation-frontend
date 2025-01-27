@@ -9,7 +9,9 @@ from streamlit_js_eval import streamlit_js_eval
 
 URL = os.getenv("URL")
 api = GiftCodeRedemptionAPI(base_url=URL)
-st.session_state.reload_data = True
+
+if "reload_data" not in st.session_state:
+    st.session_state.reload_data = True
 
 # Function to handle player creation
 def add_player_callback():
