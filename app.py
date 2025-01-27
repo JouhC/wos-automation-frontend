@@ -73,6 +73,7 @@ def redeem_giftcodes_callback():
             st.error(f"Failed to redeem gift codes: {e}")
 
 def reload_data_callback():
+    st.cache_data.clear()
     streamlit_js_eval(js_expressions="parent.window.location.reload()")
     st.session_state.reload_data = True
 
@@ -82,7 +83,6 @@ st.markdown("<p style='text-align: left; font-size: 20px;'>Automatically Redeem 
 st.write("")
 
 if st.session_state.reload_data:
-    st.cache_data.clear()
     player_data, players = load_player_data()
     giftcodes = load_giftcodes()
     st.session_state.reload_data = False
