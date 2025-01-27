@@ -69,10 +69,6 @@ def redeem_giftcodes_callback():
         except Exception as e:
             st.error(f"Failed to redeem gift codes: {e}")
 
-# Initialize session state variables
-if "reload_data" not in st.session_state:
-    st.session_state.reload_data = False
-
 # Main Layout
 st.markdown("<h1 style='text-align: left;'>Whiteout Survival Redeem Code Subscription</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: left; font-size: 20px;'>Automatically Redeem Rewards with Official Gift Codes in Whiteout: Survival!</p>", unsafe_allow_html=True)
@@ -107,8 +103,6 @@ with col1:
 # Right Column: Display Gift Codes
 with col2:
     st.subheader("Available Gift Codes")
-
-    giftcodes = load_giftcodes()
     if giftcodes:
         st.markdown("<style>.gift-code {"
                     "background-color: #2E8B57;"
