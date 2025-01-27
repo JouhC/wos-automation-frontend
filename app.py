@@ -76,6 +76,8 @@ def redeem_giftcodes_callback():
 
 def reload_data_callback():
     st.cache_data.clear()
+    response = api.update_players()
+    print(response)
     streamlit_js_eval(js_expressions="parent.window.location.reload()")
     st.session_state.reload_data = True
 

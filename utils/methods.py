@@ -62,6 +62,12 @@ class GiftCodeRedemptionAPI:
         url = f"{self.base_url}/automate-all/"
         response = requests.post(url)
         return self._handle_response(response)
+    
+    # Update Subscribed Players endpoint
+    def update_players(self):
+        url = f"{self.base_url}/update-players/"
+        response = requests.post(url)
+        return self._handle_response(response)
 
 # Example usage
 if __name__ == "__main__":
@@ -77,6 +83,7 @@ if __name__ == "__main__":
         print(api.set_giftcode_inactive(code="GIFT123"))
         print(api.redeem_giftcode(player_id="player123"))
         print(api.list_redeemed_codes(player_id="player123"))
-        print(api.run_main_logic(subreddit_name="giftcodes", keyword="new"))
+        print(api.run_main_logic())
+        print(api.update_players())
     except requests.exceptions.RequestException as e:
         print(f"An error occurred: {e}")
