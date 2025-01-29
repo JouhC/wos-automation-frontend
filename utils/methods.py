@@ -17,12 +17,18 @@ class GiftCodeRedemptionAPI:
 
     # Players endpoints
     def list_players(self):
-        url = f"{self.base_url}/players/"
+        url = f"{self.base_url}/players/list/"
         response = requests.get(url)
         return self._handle_response(response)
 
     def create_player(self, player_id):
-        url = f"{self.base_url}/players/"
+        url = f"{self.base_url}/players/create/"
+        data = {"player_id": player_id}
+        response = requests.post(url, json=data)
+        return self._handle_response(response)
+    
+    def update_player_profile(self, player_id):
+        url = f"{self.base_url}/players/update/"
         data = {"player_id": player_id}
         response = requests.post(url, json=data)
         return self._handle_response(response)
@@ -69,21 +75,5 @@ class GiftCodeRedemptionAPI:
         response = requests.post(url)
         return self._handle_response(response)
 
-# Example usage
 if __name__ == "__main__":
-    api = GiftCodeRedemptionAPI(base_url="https://example.com/api")
-
-    # Example calls
-    try:
-        print(api.get_root())
-        print(api.list_players())
-        print(api.create_player(player_id="player123"))
-        print(api.fetch_giftcodes())
-        print(api.list_giftcodes())
-        print(api.set_giftcode_inactive(code="GIFT123"))
-        print(api.redeem_giftcode(player_id="player123"))
-        print(api.list_redeemed_codes(player_id="player123"))
-        print(api.run_main_logic())
-        print(api.update_players())
-    except requests.exceptions.RequestException as e:
-        print(f"An error occurred: {e}")
+    pass

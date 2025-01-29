@@ -5,40 +5,15 @@ if not bool(os.getenv("PROD")):
     from dotenv import load_dotenv
     load_dotenv(override=True)  # Load .env file in local development
 from utils.methods import GiftCodeRedemptionAPI
-import pandas as pd
+from streamlit_js_eval import streamlit_js_eval
 
 URL = os.getenv("URL")
 api = GiftCodeRedemptionAPI(base_url=URL)
 
-def player_data_format(players):
-    def style_redeemed(val):
-        return 'text-align: center;'
-    
-    players = pd.DataFrame(players)
+global player_data, giftcodes
 
-    players = players[['avatar_image', 'nickname', 'stove_lv', 'kid', 'redeemed_all']]
-    players.loc[:, "redeemed_all"] = players["redeemed_all"].apply(map_status_to_icon)
-    players = players.reset_index(drop=True)
-
-    styled_df = players.style.applymap(style_redeemed, subset=['redeemed_all'])
-
-    return styled_df
-
-def map_status_to_icon(status):
-    if status == 1:
-        return "✅"  # Check icon
-    else:
-        return "❌"  # X icon
-
-def reload_players():
-    with st.spinner('Loading player data...'):
-        response = api.list_players()
-        st.session_state.players = player_data_format(response.get('players', []))
-
-def reload_giftcodes():
-    with st.spinner('Loading gift codes...'):
-        response = api.list_giftcodes()
-        st.session_state.giftcodes = response.get('giftcodes', [])
+if "reload_data" not in st.session_state:
+    st.session_state.reload_data = True
 
 # Function to handle player creation
 def add_player_callback():
@@ -46,12 +21,37 @@ def add_player_callback():
         with st.spinner('Adding player...'):
             try:
                 response = api.create_player(player_id=str(st.session_state.new_player))
-                st.success(response.get('message', 'Player added successfully!'))
-                reload_players()
+                st.success(f"Player '{st.session_state.new_player}' added successfully!")
+                st.session_state.reload_data = True  # Trigger reload of data
             except Exception as e:
                 st.error(f"Failed to add player: {e}")
     else:
         st.error("Player ID cannot be empty.")
+
+def map_status_to_icon(status):
+    if status == 1:
+        return "✅"  # Check icon
+    else:
+        return "❌"  # X icon
+
+# Load player data
+def load_player_data():
+    with st.spinner('Loading player data...'):
+        response = api.list_players()
+        players = pd.DataFrame(response['players'])
+
+        data = players[['avatar_image', 'nickname', 'stove_lv', 'kid', 'redeemed_all']]
+        data.loc[:, "redeemed_all"] = data["redeemed_all"].apply(map_status_to_icon)
+        data = data.reset_index(drop=True)
+
+        return data, players['fid'].tolist()
+
+# Load gift codes
+def load_giftcodes():
+    with st.spinner('Loading gift codes...'):
+        response = api.list_giftcodes()
+        giftcodes = response.get('giftcodes', [])
+        return giftcodes  # List of gift codes
 
 # Fetch new gift codes
 def fetch_giftcodes_callback():
@@ -63,7 +63,6 @@ def fetch_giftcodes_callback():
                 st.info("No new gift codes available.")
             else:
                 st.success(f"New gift codes fetched: {"".join(new_codes)}")
-                st.session_state.giftcodes.extend(new_codes)
         except Exception as e:
             st.error(f"Failed to fetch gift codes: {e}")
 
@@ -72,29 +71,30 @@ def redeem_giftcodes_callback():
     with st.spinner('Redeeming gift codes...'):
         try:
             response = api.run_main_logic()
-            st.session_state.players = player_data_format(response.get('players', []))
-            st.session_state.giftcodes = response.get('giftcodes', [])
+            player_data = response.get('players', [])
+            giftcodes = response.get('giftcodes', [])
 
             st.success("Gift codes applied to all players!")
         except Exception as e:
             st.error(f"Failed to redeem gift codes: {e}")
             st.session_state.reload_data = True  # Trigger reload of data
 
-if "reload_data" not in st.session_state:
+def reload_data_callback():
+    st.cache_data.clear()
+    response = api.update_players()
+    print(response)
+    streamlit_js_eval(js_expressions="parent.window.location.reload()")
     st.session_state.reload_data = True
-
-if "players" not in st.session_state:
-    response = api.list_players()
-    st.session_state.players = player_data_format(response.get('players', []))
-
-if "giftcodes" not in st.session_state:
-    response = api.list_giftcodes()
-    st.session_state.giftcodes = response.get('giftcodes', [])
 
 # Main Layout
 st.markdown("<h1 style='text-align: left;'>Whiteout Survival Redeem Code Subscription</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: left; font-size: 20px;'>Automatically Redeem Rewards with Official Gift Codes in Whiteout: Survival!</p>", unsafe_allow_html=True)
 st.write("")
+
+if st.session_state.reload_data:
+    player_data, players = load_player_data()
+    giftcodes = load_giftcodes()
+    st.session_state.reload_data = False
 
 # Sidebar input for adding a player
 with st.sidebar:
@@ -110,7 +110,7 @@ col1, col2 = st.columns([3, 2])  # Wider column for players, narrower for gift c
 with col1:
     st.subheader("Subscribed Players")
 
-    st.dataframe(st.session_state.players, hide_index=True, column_config={
+    st.dataframe(player_data, hide_index=True, column_config={
         "avatar_image": st.column_config.ImageColumn(label=""),
         "nickname": st.column_config.TextColumn(label="Nickname"),
         "stove_lv": st.column_config.TextColumn(label="Stove Lv. 💬", help="📍**Furnace Level**"),
@@ -121,7 +121,7 @@ with col1:
 # Right Column: Display Gift Codes
 with col2:
     st.subheader("Available Gift Codes")
-    if st.session_state.giftcodes:
+    if giftcodes:
         st.markdown("<style>.gift-code {"
                     "background-color: #2E8B57;"
                     "color: white;"
@@ -137,7 +137,7 @@ with col2:
                     "}</style>", unsafe_allow_html=True)
 
         # Display each gift code
-        for code in st.session_state.giftcodes:
+        for code in giftcodes:
             st.markdown(f"<div class='gift-code'>{code}</div>", unsafe_allow_html=True)
     else:
         st.info("No gift codes available.")
