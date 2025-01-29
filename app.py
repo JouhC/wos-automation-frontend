@@ -80,7 +80,14 @@ def redeem_giftcodes_callback():
             st.error(f"Failed to redeem gift codes: {e}")
             st.session_state.reload_data = True  # Trigger reload of data
 
-if "reload_data" not in st.session_state or st.session_state.reload_data:
+if "players" not in st.session_state:
+    st.session_state.players = []
+if "giftcodes" not in st.session_state:
+    st.session_state.giftcodes = []
+if "reload_data" not in st.session_state:
+    st.session_state.reload_data = True
+
+if st.session_state.reload_data:
     response_players = api.list_players()
     st.session_state.players = player_data_format(response_players.get('players', []))
 
