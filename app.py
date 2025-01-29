@@ -80,16 +80,14 @@ def redeem_giftcodes_callback():
             st.error(f"Failed to redeem gift codes: {e}")
             st.session_state.reload_data = True  # Trigger reload of data
 
-if "reload_data" not in st.session_state:
-    st.session_state.reload_data = True
+if "reload_data" not in st.session_state or st.session_state.reload_data:
+    response_players = api.list_players()
+    st.session_state.players = player_data_format(response_players.get('players', []))
 
-if "players" not in st.session_state:
-    response = api.list_players()
-    st.session_state.players = player_data_format(response.get('players', []))
+    response_giftcodes = api.list_giftcodes()
+    st.session_state.giftcodes = response_giftcodes.get('giftcodes', [])
 
-if "giftcodes" not in st.session_state:
-    response = api.list_giftcodes()
-    st.session_state.giftcodes = response.get('giftcodes', [])
+    st.session_state.reload_data = False
 
 # Main Layout
 st.markdown("<h1 style='text-align: left;'>Whiteout Survival Redeem Code Subscription</h1>", unsafe_allow_html=True)
