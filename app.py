@@ -139,8 +139,6 @@ with st.sidebar:
     st.markdown("---")
     if st.button("Refresh Data"):
         st.session_state.reload_data = True
-        st.experimental_rerun()
-
 
 # Split layout into two columns
 col1, col2 = st.columns([3, 2])  # Players column is wider than gift codes
