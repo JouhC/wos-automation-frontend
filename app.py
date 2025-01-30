@@ -36,25 +36,27 @@ def player_data_format(players):
 
     return df
 
-@st.cache_data(persist="disk")
+@st.cache_data
 def reload_players():
     """Fetch and update player data in session state."""
     with st.spinner('Loading player data...'):
         try:
             response = api.list_players()
-            st.session_state.players = player_data_format(response.get('players', []))
+            return player_data_format(response.get('players', []))
         except Exception as e:
             st.error(f"Error loading players: {e}")
+            return pd.DataFrame()
 
-@st.cache_data(persist="disk")
+@st.cache_data
 def reload_giftcodes():
     """Fetch and update gift codes in session state."""
     with st.spinner('Loading gift codes...'):
         try:
             response = api.list_giftcodes()
-            st.session_state.giftcodes = response.get('giftcodes', [])
+            return response.get('giftcodes', [])
         except Exception as e:
             st.error(f"Error loading gift codes: {e}")
+            return []
 
 
 def add_player_callback():
@@ -68,7 +70,7 @@ def add_player_callback():
         try:
             response = api.create_player(player_id=str(player_id))
             st.success(response.get('message', 'Player added successfully!'))
-            reload_players()
+            st.session_state.players = reload_players()
         except Exception as e:
             st.error(f"Failed to add player: {e}")
 
@@ -103,19 +105,16 @@ def redeem_giftcodes_callback():
 
 # ============== Session State Initialization ==============
 if "players" not in st.session_state:
-    st.session_state.players = []
+    st.session_state.players = reload_players()
 if "giftcodes" not in st.session_state:
-    st.session_state.giftcodes = []
+    st.session_state.giftcodes = reload_giftcodes()
 if "reload_data" not in st.session_state:
     st.session_state.reload_data = False  # Set to False initially
 
 # Reload data if explicitly requested
 if st.session_state.reload_data:
-    reload_players().clear()
-    reload_players()
-
-    reload_giftcodes().clear()
-    reload_giftcodes()
+    st.session_state.players = reload_players()
+    st.session_state.giftcodes = reload_giftcodes()
     st.session_state.reload_data = False
 
 
