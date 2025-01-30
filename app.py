@@ -36,7 +36,7 @@ def player_data_format(players):
 
     return df
 
-
+@st.cache_data(persist="disk")
 def reload_players():
     """Fetch and update player data in session state."""
     with st.spinner('Loading player data...'):
@@ -46,7 +46,7 @@ def reload_players():
         except Exception as e:
             st.error(f"Error loading players: {e}")
 
-
+@st.cache_data(persist="disk")
 def reload_giftcodes():
     """Fetch and update gift codes in session state."""
     with st.spinner('Loading gift codes...'):
@@ -111,7 +111,10 @@ if "reload_data" not in st.session_state:
 
 # Reload data if explicitly requested
 if st.session_state.reload_data:
+    reload_players().clear()
     reload_players()
+
+    reload_giftcodes().clear()
     reload_giftcodes()
     st.session_state.reload_data = False
 
@@ -159,16 +162,24 @@ with col1:
 # ============== Gift Codes Display ==============
 with col2:
     st.subheader("Available Gift Codes")
-
     if st.session_state.giftcodes:
-        cols = st.columns(min(len(st.session_state.giftcodes), 5))  # Limit to 5 columns for better spacing
-        for index, code in enumerate(st.session_state.giftcodes):
-            cols[index % len(cols)].markdown(
-                f"<div class='gift-code' style='background-color: #2E8B57; color: white; padding: 10px 20px; "
-                "margin: 5px; border-radius: 5px; text-align: center; font-size: 18px;'>"
-                f"{code}</div>",
-                unsafe_allow_html=True
-            )
+        st.markdown("<style>.gift-code {"
+                    "background-color: #2E8B57;"
+                    "color: white;"
+                    "padding: 10px 20px;"
+                    "margin: 5px;"
+                    "border-radius: 5px;"
+                    "display: inline-block;"
+                    "font-size: 18px;"
+                    "text-align: center;"
+                    "white-space: nowrap;"
+                    "overflow: hidden;"
+                    "text-overflow: ellipsis;"
+                    "}</style>", unsafe_allow_html=True)
+
+        # Display each gift code
+        for code in st.session_state.giftcodes:
+            st.markdown(f"<div class='gift-code'>{code}</div>", unsafe_allow_html=True)
     else:
         st.info("No gift codes available.")
 
