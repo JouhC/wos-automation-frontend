@@ -113,8 +113,7 @@ if "reload_data" not in st.session_state:
 
 # Reload data if explicitly requested
 if st.session_state.reload_data:
-    reload_players().clear()
-    reload_giftcodes.clear()
+    st.cache_data.clear()
     st.session_state.players = reload_players()
     st.session_state.giftcodes = reload_giftcodes()
     st.session_state.reload_data = False
