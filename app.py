@@ -150,7 +150,8 @@ col1, col2 = st.columns([3, 2])  # Players column is wider than gift codes
 with col1:
     st.subheader("Subscribed Players")
 
-    st.dataframe(st.session_state.players, hide_index=True, column_config={
+    st.dataframe(st.session_state.players, hide_index=True, height=35*len(st.session_state.players)+38,
+    column_config={
         "avatar_image": st.column_config.ImageColumn(label=""),
         "nickname": st.column_config.TextColumn(label="Nickname"),
         "stove_lv": st.column_config.TextColumn(label="Stove Lv. 💬", help="📍**Furnace Level**"),
