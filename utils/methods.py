@@ -74,6 +74,11 @@ class GiftCodeRedemptionAPI:
         url = f"{self.base_url}/update-players/"
         response = requests.post(url)
         return self._handle_response(response)
+    
+    def expired_check(self):
+        url = f"{self.base_url}/giftcodes/expired-check/"
+        response = requests.post(url)
+        return self._handle_response(response)
 
 if __name__ == "__main__":
     pass

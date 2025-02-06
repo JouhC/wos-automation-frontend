@@ -80,12 +80,13 @@ def fetch_giftcodes_callback():
     with st.spinner('Fetching gift codes...'):
         try:
             response = api.fetch_giftcodes()
+            response_expired = api.expired_check()
             new_codes = response.get('new_codes', [])
             if not new_codes:
                 st.info("No new gift codes available.")
             else:
                 st.success(f"New gift codes fetched: {', '.join(new_codes)}")
-                st.session_state.giftcodes.extend(new_codes)
+            st.session_state.giftcodes = response_expired.get('active_codes', st.session_state.giftcodes.extend(new_codes))
         except Exception as e:
             st.error(f"Failed to fetch gift codes: {e}")
 
