@@ -1,4 +1,5 @@
 import requests
+from time import time
 
 class GiftCodeRedemptionAPI:
     def __init__(self, base_url):
@@ -7,6 +8,7 @@ class GiftCodeRedemptionAPI:
     def _handle_response(self, response):
         if response.status_code == 200:
             return response.json()
+        
         response.raise_for_status()
 
     # Root endpoint
@@ -78,6 +80,11 @@ class GiftCodeRedemptionAPI:
     def expired_check(self):
         url = f"{self.base_url}/giftcodes/expired-check/"
         response = requests.post(url)
+        return self._handle_response(response)
+    
+    def get_task_status(self, task_id):
+        url = f"{self.base_url}/task_status/{task_id}/"
+        response = requests.get(url)
         return self._handle_response(response)
 
 if __name__ == "__main__":

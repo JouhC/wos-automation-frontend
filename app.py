@@ -1,5 +1,6 @@
 import os
 import datetime
+import time
 import pandas as pd
 import streamlit as st
 
@@ -13,13 +14,11 @@ from utils.methods import GiftCodeRedemptionAPI
 URL = os.getenv("URL")
 api = GiftCodeRedemptionAPI(base_url=URL)
 
-
 # ============== Utility Functions ==============
 
 def map_status_to_icon(status):
     """Map redemption status to check/X icons."""
     return "✅" if status == 1 else "❌"
-
 
 def player_data_format(players):
     """Format player data for display."""
@@ -92,19 +91,49 @@ def fetch_giftcodes_callback():
 
 
 def redeem_giftcodes_callback():
-    """Redeem gift codes for all players."""
-    with st.spinner('Redeeming gift codes...'):
+    """Redeem gift codes for all players with real-time progress tracking."""
+    with st.spinner('Starting redemption process...'):
         try:
+            # Step 1: Start the automate-all task
             response = api.run_main_logic()
-            st.session_state.players = player_data_format(response.get('players', []))
-            st.session_state.giftcodes = response.get('giftcodes', [])
-            st.success("Gift codes applied to all players!")
+            task_id = response.get('task_id', None)
+            if not task_id:
+                st.error("Failed to initiate redemption process.")
+                return
+            
+            st.success(f"Task started! Tracking progress...")
+
+            # Step 2: Track progress
+            progress_bar = st.progress(0)
+            status_text = st.empty()
+
+            while True:
+                time.sleep(10)  # Poll every 10 seconds
+                task_status = api.get_task_status(task_id)
+                progress = task_status.get('progress', 0)
+                status = task_status.get('status', 'Processing')
+
+                progress_bar.progress(progress / 100)  # Convert to percentage
+                status_text.text(f"Progress: {progress}% - {status}")
+
+                if status == "Completed" or status == "Failed":
+                    break  # Stop polling when done
+
+            # Step 3: Update session state
+            if status == "Completed":
+                st.session_state.players = player_data_format(task_status.get('players', []))
+                st.session_state.giftcodes = task_status.get('giftcodes', [])
+                st.success("Gift codes applied to all players!")
+            else:
+                st.error(f"Task failed: {task_status.get('error', 'Unknown error')}")
+
         except Exception as e:
             st.error(f"Failed to redeem gift codes: {e}")
             st.session_state.reload_data = True  # Trigger reload of data
 
 
 # ============== Session State Initialization ==============
+
 if "players" not in st.session_state:
     st.session_state.players = reload_players()
 if "giftcodes" not in st.session_state:
@@ -165,23 +194,8 @@ with col1:
 with col2:
     st.subheader("Available Gift Codes")
     if st.session_state.giftcodes:
-        st.markdown("<style>.gift-code {"
-                    "background-color: #2E8B57;"
-                    "color: white;"
-                    "padding: 10px 20px;"
-                    "margin: 5px;"
-                    "border-radius: 5px;"
-                    "display: inline-block;"
-                    "font-size: 18px;"
-                    "text-align: center;"
-                    "white-space: nowrap;"
-                    "overflow: hidden;"
-                    "text-overflow: ellipsis;"
-                    "}</style>", unsafe_allow_html=True)
-
-        # Display each gift code
         for code in st.session_state.giftcodes:
-            st.markdown(f"<div class='gift-code'>{code}</div>", unsafe_allow_html=True)
+            st.code(code, language="plaintext")
     else:
         st.info("No gift codes available.")
 
