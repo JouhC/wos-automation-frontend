@@ -203,6 +203,6 @@ with col2:
 # ============== Footer ==============
 datenow = datetime.date.today().strftime("%d.%m.%Y")  # Formatted as DD.MM.YYYY
 st.markdown(
-    f'<span style="font-size: 14px">**Author:** Jouh | **Date:** {datenow} | Made for EOS friends!</span>',
+    f'<span style="font-size: 14px">**Author:** <a href="https://github.com/JouhC" target="_blank" style="text-decoration: none; color: inherit;"><img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" width="14" style="vertical-align: middle;"> Jouh</a> | **Date:** {datenow} | Made for EOS friends!</span>',
     unsafe_allow_html=True
 )
