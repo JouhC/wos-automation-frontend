@@ -86,6 +86,11 @@ class GiftCodeRedemptionAPI:
         url = f"{self.base_url}/task_status/{task_id}/"
         response = requests.get(url)
         return self._handle_response(response)
+    
+    def get_check_inprogress(self):
+        url = f"{self.base_url}/task_status/check_inprogress/"
+        response = requests.get(url)
+        return self._handle_response(response)
 
 if __name__ == "__main__":
     pass
