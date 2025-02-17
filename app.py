@@ -94,21 +94,32 @@ def redeem_giftcodes_callback():
     """Redeem gift codes for all players with real-time progress tracking."""
     with st.spinner('Starting redemption process...'):
         try:
-            # Step 1: Start the automate-all task
-            response = api.run_main_logic()
-            task_id = response.get('task_id', None)
-            if not task_id:
-                st.error("Failed to initiate redemption process.")
-                return
+            # Step 0: Check for inprogress task if yes, skip Step 1 and 2
+            inprogress_task_id = api.get_check_inprogress()
             
-            st.success(f"Task started! Tracking progress...")
+            if inprogress_task_id is None:
+                # Step 1: Start the automate-all task
+                response = api.run_main_logic()
+                task_id = response.get('task_id', None)
+                if not task_id:
+                    st.error("Failed to initiate redemption process.")
+                    return
+                
+                st.success(f"Task started! Tracking progress...")
 
-            # Step 2: Track progress
-            progress_bar = st.progress(0)
+                # Step 2: Track progress
+                progress_bar = st.progress(0)
+            else:
+                task_id = inprogress_task_id
+                task_status = api.get_task_status(task_id)
+                progress = task_status.get('progress', 0)
+                progress_bar = st.progress(progress)
+                st.success(f"Task already started! Tracking progress...")
+            
             status_text = st.empty()
 
             while True:
-                time.sleep(10)  # Poll every 10 seconds
+                time.sleep(5)  # Poll every 5 seconds
                 task_status = api.get_task_status(task_id)
                 progress = task_status.get('progress', 0)
                 status = task_status.get('status', 'Processing')
