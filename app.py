@@ -35,7 +35,7 @@ def player_data_format(players):
 
     return df
 
-@st.cache_data
+@st.cache_data(ttl=3600)
 def reload_players():
     """Fetch and update player data in session state."""
     with st.spinner('Loading player data...'):
@@ -46,7 +46,7 @@ def reload_players():
             st.error(f"Error loading players: {e}")
             return pd.DataFrame()
 
-@st.cache_data
+@st.cache_data(ttl=3600)
 def reload_giftcodes():
     """Fetch and update gift codes in session state."""
     with st.spinner('Loading gift codes...'):
