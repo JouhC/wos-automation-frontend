@@ -57,6 +57,9 @@ class GiftCodeRedemptionAPI:
 
     def update_player_profile(self, player_id):
         return self._safe_request("POST", "/players/update/", {"player_id": player_id})
+    
+    def remove_player(self, player_id):
+        return self._safe_request("POST", "/players/remove/", {"player_id": player_id})
 
     # Giftcodes endpoints
     def fetch_giftcodes(self):
@@ -78,7 +81,7 @@ class GiftCodeRedemptionAPI:
 
     # Automate-all endpoint
     def run_main_logic(self):
-        return self._safe_request("POST", "/automate-all/")
+        return self._safe_request("POST", "/automate-all/", {"n": 'all'})
 
     # Update Subscribed Players endpoint
     def update_players(self):
