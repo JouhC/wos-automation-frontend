@@ -85,7 +85,7 @@ def fetch_giftcodes_callback():
                 st.info("No new gift codes available.")
             else:
                 st.success(f"New gift codes fetched: {', '.join(new_codes)}")
-            st.session_state.giftcodes = st.session_state.giftcodes.extend(new_codes)
+            st.session_state.giftcodes = reload_giftcodes()
         except Exception as e:
             st.error(f"Failed to fetch gift codes: {e}")
 
