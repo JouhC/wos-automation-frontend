@@ -128,7 +128,7 @@ def fetch_giftcodes_callback():
                 giftcodes = response.get('giftcodes', [])
 
                 new_codes_true = [val for val in new_codes if val in giftcodes]
-                if not new_codes:
+                if not new_codes_true:
                     st.info("No new gift codes available.")
                 else:
                     st.success(f"New gift codes fetched: {', '.join(new_codes_true)}")
