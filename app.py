@@ -125,10 +125,13 @@ def fetch_giftcodes_callback():
             if response['status'] == "Completed":
                 st.session_state.players = player_data_format(response.get('players', []))
                 new_codes = response.get('new_codes', [])
-                if not new_codes:
+                giftcodes = response.get('giftcodes', [])
+
+                new_codes_true = [val for val in new_codes if val in giftcodes]
+                if not new_codes_true:
                     st.info("No new gift codes available.")
                 else:
-                    st.success(f"New gift codes fetched: {', '.join(new_codes)}")
+                    st.success(f"New gift codes fetched: {', '.join(new_codes_true)}")
                 st.session_state.giftcodes = response.get('giftcodes', [])
             else:
                 raise f"Task failed: {response.get('error', 'Unknown error')}"
