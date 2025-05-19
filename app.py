@@ -57,6 +57,54 @@ def reload_giftcodes():
             st.error(f"Error loading gift codes: {e}")
             return []
 
+def redemption_process(method: str):
+    # Step 0: Check for inprogress task if yes, skip Step 1 and 2
+    inprogress_task_id = api.get_check_inprogress()
+    
+    if inprogress_task_id is None:
+        # Step 1: Start the automate-all task
+        if method == "automate-all":
+            response = api.run_main_logic()
+        elif method == "expired-check":
+            response = api.expired_check()
+        task_id = response.get('task_id', None)
+        if not task_id:
+            st.error("Failed to initiate redemption process.")
+            return
+        
+        st.success(f"Task started! Tracking progress...")
+
+        # Step 2: Track progress
+        progress_bar = st.progress(0)
+    else:
+        task_id = inprogress_task_id
+        task_status = api.get_task_status(task_id)
+        progress = task_status.get('progress', 0)
+        progress_bar = st.progress(progress)
+        st.success(f"Task already started! Tracking progress...")
+    
+    status_text = st.empty()
+
+    while True:
+        time.sleep(5)  # Poll every 5 seconds
+        task_status = api.get_task_status(task_id)
+        progress = task_status.get('progress', 0)
+        status = task_status.get('status', 'Processing')
+
+        progress_bar.progress(progress / 100)  # Convert to percentage
+        status_text.text(f"Progress: {progress}% - {status}")
+
+        if status == "Completed" or status == "Failed":
+            break  # Stop polling when done
+
+    # Step 3: Update session state
+    if status == "Completed":
+        st.session_state.players = player_data_format(task_status.get('players', []))
+        st.session_state.giftcodes = task_status.get('giftcodes', [])
+        st.success("Gift codes applied to all players!")
+    else:
+        st.error(f"Task failed: {task_status.get('error', 'Unknown error')}")
+
 
 def add_player_callback():
     """Handle player creation and update session state."""
@@ -78,8 +126,8 @@ def fetch_giftcodes_callback():
     """Fetch new gift codes and update session state."""
     with st.spinner('Fetching gift codes...'):
         try:
+            redemption_process("expired-check")
             response = api.fetch_giftcodes()
-            #response_expired = api.expired_check()
             new_codes = response.get('new_codes', [])
             if not new_codes:
                 st.info("No new gift codes available.")
@@ -94,49 +142,7 @@ def redeem_giftcodes_callback():
     """Redeem gift codes for all players with real-time progress tracking."""
     with st.spinner('Starting redemption process...'):
         try:
-            # Step 0: Check for inprogress task if yes, skip Step 1 and 2
-            inprogress_task_id = api.get_check_inprogress()
-            
-            if inprogress_task_id is None:
-                # Step 1: Start the automate-all task
-                response = api.run_main_logic()
-                task_id = response.get('task_id', None)
-                if not task_id:
-                    st.error("Failed to initiate redemption process.")
-                    return
-                
-                st.success(f"Task started! Tracking progress...")
-
-                # Step 2: Track progress
-                progress_bar = st.progress(0)
-            else:
-                task_id = inprogress_task_id
-                task_status = api.get_task_status(task_id)
-                progress = task_status.get('progress', 0)
-                progress_bar = st.progress(progress)
-                st.success(f"Task already started! Tracking progress...")
-            
-            status_text = st.empty()
-
-            while True:
-                time.sleep(5)  # Poll every 5 seconds
-                task_status = api.get_task_status(task_id)
-                progress = task_status.get('progress', 0)
-                status = task_status.get('status', 'Processing')
-
-                progress_bar.progress(progress / 100)  # Convert to percentage
-                status_text.text(f"Progress: {progress}% - {status}")
-
-                if status == "Completed" or status == "Failed":
-                    break  # Stop polling when done
-
-            # Step 3: Update session state
-            if status == "Completed":
-                st.session_state.players = player_data_format(task_status.get('players', []))
-                st.session_state.giftcodes = task_status.get('giftcodes', [])
-                st.success("Gift codes applied to all players!")
-            else:
-                st.error(f"Task failed: {task_status.get('error', 'Unknown error')}")
+            redemption_process("automate-all")
 
         except Exception as e:
             st.error(f"Failed to redeem gift codes: {e}")
