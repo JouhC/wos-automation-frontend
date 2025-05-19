@@ -96,15 +96,8 @@ def redemption_process(method: str):
 
         if status == "Completed" or status == "Failed":
             break  # Stop polling when done
-
-    # Step 3: Update session state
-    if status == "Completed":
-        st.session_state.players = player_data_format(task_status.get('players', []))
-        st.session_state.giftcodes = task_status.get('giftcodes', [])
-        st.success("Gift codes applied to all players!")
-    else:
-        st.error(f"Task failed: {task_status.get('error', 'Unknown error')}")
-
+    
+    return task_status
 
 def add_player_callback():
     """Handle player creation and update session state."""
@@ -126,14 +119,19 @@ def fetch_giftcodes_callback():
     """Fetch new gift codes and update session state."""
     with st.spinner('Fetching gift codes...'):
         try:
-            redemption_process("expired-check")
-            response = api.fetch_giftcodes()
-            new_codes = response.get('new_codes', [])
-            if not new_codes:
-                st.info("No new gift codes available.")
+            response = redemption_process("expired-check")
+
+            # Step 3: Update session state
+            if response['status'] == "Completed":
+                st.session_state.players = player_data_format(response.get('players', []))
+                new_codes = response.get('new_codes', [])
+                if not new_codes:
+                    st.info("No new gift codes available.")
+                else:
+                    st.success(f"New gift codes fetched: {', '.join(new_codes)}")
+                st.session_state.giftcodes = response.get('giftcodes', [])
             else:
-                st.success(f"New gift codes fetched: {', '.join(new_codes)}")
-            st.session_state.giftcodes = reload_giftcodes()
+                raise f"Task failed: {response.get('error', 'Unknown error')}"
         except Exception as e:
             st.error(f"Failed to fetch gift codes: {e}")
 
@@ -142,7 +140,20 @@ def redeem_giftcodes_callback():
     """Redeem gift codes for all players with real-time progress tracking."""
     with st.spinner('Starting redemption process...'):
         try:
-            redemption_process("automate-all")
+            response = redemption_process("automate-all")
+
+            # Step 3: Update session state
+            if response['status'] == "Completed":
+                st.session_state.players = player_data_format(response.get('players', []))
+                new_codes = response.get('new_codes', [])
+                if not new_codes:
+                    st.info("No new gift codes available.")
+                else:
+                    st.success(f"New gift codes fetched: {', '.join(new_codes)}")
+                st.session_state.giftcodes = response.get('giftcodes', [])
+                st.success("Gift codes applied to all players!")
+            else:
+                st.error(f"Task failed: {response.get('error', 'Unknown error')}")
 
         except Exception as e:
             st.error(f"Failed to redeem gift codes: {e}")
