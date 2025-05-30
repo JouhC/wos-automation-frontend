@@ -61,7 +61,7 @@ def redemption_process(method: str):
     # Step 0: Check for inprogress task if yes, skip Step 1 and 2
     inprogress_task_id = api.get_check_inprogress()
     
-    if inprogress_task_id is None:
+    if not inprogress_task_id.get("result"):
         # Step 1: Start the automate-all task
         if method == "automate-all":
             response = api.run_main_logic()
@@ -138,7 +138,7 @@ def fetch_giftcodes_callback():
 
 def redeem_giftcodes_callback():
     """Redeem gift codes for all players with real-time progress tracking."""
-    with st.spinner('Starting redemption process...'):
+    with st.spinner('Limiting to 20 tasks. Starting redemption process...'):
         try:
             response = redemption_process("automate-all")
 
@@ -151,7 +151,7 @@ def redeem_giftcodes_callback():
                 else:
                     st.success(f"New gift codes fetched: {', '.join(new_codes)}")
                 st.session_state.giftcodes = response.get('giftcodes', [])
-                st.success("Gift codes applied to all players!")
+                st.success("Gift codes applied to some players!")
             else:
                 st.error(f"Task failed: {response.get('error', 'Unknown error')}")
 
