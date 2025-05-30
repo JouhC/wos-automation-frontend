@@ -61,7 +61,7 @@ def redemption_process(method: str):
     # Step 0: Check for inprogress task if yes, skip Step 1 and 2
     inprogress_task_id = api.get_check_inprogress()
     
-    if inprogress_task_id is None:
+    if not inprogress_task_id.get("result"):
         # Step 1: Start the automate-all task
         if method == "automate-all":
             response = api.run_main_logic()
