@@ -94,7 +94,7 @@ def redemption_process(method: str):
         progress_bar.progress(progress / 100)  # Convert to percentage
         status_text.text(f"Progress: {progress}% - {status}")
 
-        if status == "Completed" or status == "Failed":
+        if status in ["Completed", "Failed", "Timeout"]:
             break  # Stop polling when done
     
     return task_status
