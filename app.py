@@ -3,6 +3,7 @@ import datetime
 import time
 import pandas as pd
 import streamlit as st
+import ast  
 
 if not bool(os.getenv("PROD")):
     from dotenv import load_dotenv
@@ -41,7 +42,7 @@ def reload_players():
     with st.spinner('Loading player data...'):
         try:
             response = api.list_players()
-            return player_data_format(response.get('players', []))
+            return response.get('players', [])
         except Exception as e:
             st.error(f"Error loading players: {e}")
             return pd.DataFrame()
@@ -110,9 +111,48 @@ def add_player_callback():
         try:
             response = api.create_player(player_id=str(player_id))
             st.success(response.get('message', 'Player added successfully!'))
-            st.session_state.players = reload_players()
+            st.session_state.raw_players = reload_players()
+            st.session_state.players = player_data_format(st.session_state.raw_players)
         except Exception as e:
             st.error(f"Failed to add player: {e}")
+
+
+@st.dialog("Remove a Player")
+def remove_player_callback():
+    """Handle player removal and update session state."""
+    admin_players = ast.literal_eval(os.getenv("ADMIN_PLAYERS", "[]"))
+    raw_players_df = pd.DataFrame(st.session_state.raw_players)
+
+    # Reorder columns to make 'nickname' the first column
+    raw_players_df = raw_players_df[['nickname'] + [col for col in raw_players_df.columns if col != 'nickname']]
+    raw_players_df['fid'] = raw_players_df['fid'].astype(int)
+    raw_players_df = raw_players_df[~raw_players_df['fid'].isin(admin_players)]  # Exclude admin players
+
+    selected_name = st.selectbox("Select a player to remove", options=raw_players_df, key="remove_player", placeholder="Select a player to remove...")
+    if not st.session_state.get("remove_player"):
+        st.error("Please select a player to remove.")
+        return
+    
+    st.write(f"Admin Password:")        
+    password = st.text_input("Enter admin password", type="password")
+    if st.button("Remove this Player"):
+        if password != os.getenv("ADMIN_PASSWORD"):
+            st.error("Incorrect admin password.")
+            return
+        
+        player_id = raw_players_df[raw_players_df['nickname'] == selected_name]['fid'].values[0]
+        if not player_id:
+            st.error("Please select a player to remove.")
+            return
+        
+        with st.spinner('Removing player...'):
+            try:
+                response = api.remove_player(player_id=str(player_id))
+                st.success(response.get('message', 'Player removed successfully!'))
+                st.session_state.raw_players = reload_players()
+                st.session_state.players = player_data_format(st.session_state.raw_players)
+            except Exception as e:
+                st.error(f"Failed to remove player: {e}")
 
 
 def fetch_giftcodes_callback():
@@ -123,7 +163,8 @@ def fetch_giftcodes_callback():
 
             # Step 3: Update session state
             if response['status'] == "Completed":
-                st.session_state.players = player_data_format(response.get('players', []))
+                st.session_state.raw_players = response.get('players', [])
+                st.session_state.players = player_data_format(st.session_state.raw_players)
                 new_codes = response.get('new_codes', [])
                 if not new_codes:
                     st.info("No new gift codes available.")
@@ -144,7 +185,8 @@ def redeem_giftcodes_callback():
 
             # Step 3: Update session state
             if response['status'] == "Completed":
-                st.session_state.players = player_data_format(response.get('players', []))
+                st.session_state.raw_players = response.get('players', [])
+                st.session_state.players = player_data_format(st.session_state.raw_players)
                 new_codes = response.get('new_codes', [])
                 if not new_codes:
                     st.info("No new gift codes available.")
@@ -162,8 +204,10 @@ def redeem_giftcodes_callback():
 
 # ============== Session State Initialization ==============
 
+if "raw_players" not in st.session_state:
+    st.session_state.raw_players = reload_players()
 if "players" not in st.session_state:
-    st.session_state.players = reload_players()
+    st.session_state.players = player_data_format(st.session_state.raw_players)
 if "giftcodes" not in st.session_state:
     st.session_state.giftcodes = reload_giftcodes()
 if "reload_data" not in st.session_state:
@@ -172,7 +216,8 @@ if "reload_data" not in st.session_state:
 # Reload data if explicitly requested
 if st.session_state.reload_data:
     st.cache_data.clear()
-    st.session_state.players = reload_players()
+    st.session_state.raw_players = reload_players()
+    st.session_state.players = player_data_format(st.session_state.raw_players)
     st.session_state.giftcodes = reload_giftcodes()
     st.session_state.reload_data = False
 
@@ -194,6 +239,7 @@ with st.sidebar:
     st.text_input("Add a Player to Subscribe", key="new_player",
                   help="*Check your Player ID in-game through your Avatar on the top left corner")
     st.button("Add Player!", on_click=add_player_callback)
+    st.button("Remove Player", on_click=remove_player_callback)
     st.markdown("---")
     st.button("Fetch Gift Codes", on_click=fetch_giftcodes_callback)
     st.button("Apply Gift Codes to All Players", on_click=redeem_giftcodes_callback)
