@@ -15,6 +15,9 @@ from utils.methods import GiftCodeRedemptionAPI
 URL = os.getenv("URL")
 api = GiftCodeRedemptionAPI(base_url=URL)
 
+class GiftcodeTaskError(Exception):
+    pass
+
 # ============== Utility Functions ==============
 
 def map_status_to_icon(status):
@@ -172,7 +175,7 @@ def fetch_giftcodes_callback():
                     st.success(f"New gift codes fetched: {', '.join(new_codes)}")
                 st.session_state.giftcodes = response.get('giftcodes', [])
             else:
-                raise f"Task failed: {response.get('error', 'Unknown error')}"
+                raise GiftcodeTaskError(response.get('error', 'Unknown error'))
         except Exception as e:
             st.error(f"Failed to fetch gift codes: {e}")
 
