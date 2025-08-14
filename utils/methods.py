@@ -50,7 +50,7 @@ class GiftCodeRedemptionAPI:
 
     # Players endpoints
     def list_players(self):
-        return self._safe_request("GET", "/players/list/")
+        return self._safe_request("GET", "/players")
 
     def create_player(self, player_id):
         return self._safe_request("POST", "/players/create/", {"player_id": player_id})
@@ -73,25 +73,25 @@ class GiftCodeRedemptionAPI:
 
     # Redeem giftcodes endpoint
     def redeem_giftcode(self, player_id):
-        return self._safe_request("POST", "/redeem/", {"player_id": player_id})
+        return self._safe_request("POST", "/players/redeem/", {"player_id": player_id})
 
     # Redemptions endpoint
     def list_redeemed_codes(self, player_id):
-        return self._safe_request("GET", f"/redemptions/{player_id}/")
+        return self._safe_request("GET", f"/players/{player_id}/redemptions/")
 
     # Automate-all endpoint
     def run_main_logic(self):
-        return self._safe_request("POST", "/automate-all/", {"n": 'all'})
+        return self._safe_request("POST", "/tasks/automate-all/", {"n": 'all'})
 
     # Update Subscribed Players endpoint
     def update_players(self):
         return self._safe_request("POST", "/update-players/")
 
     def expired_check(self):
-        return self._safe_request("POST", "/giftcodes/expired-check/")
+        return self._safe_request("POST", "/tasks/expired-check/")
 
     def get_task_status(self, task_id):
-        return self._safe_request("GET", f"/task_status/{task_id}/")
+        return self._safe_request("GET", f"/tasks/{task_id}/")
 
     def get_check_inprogress(self):
-        return self._safe_request("GET", "/task_status/check_inprogress/")
+        return self._safe_request("GET", "/tasks/inprogress/")
