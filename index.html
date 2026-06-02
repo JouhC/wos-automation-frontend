@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Whiteout Survival Redeem Code Subscription</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <h1>Whiteout Survival Redeem Code Subscription</h1>
+        <p>Automatically redeem official gift codes and manage subscribed players from a static frontend.</p>
+      </header>
+
+      <main>
+        <section class="sidebar">
+          <div class="card action-card">
+            <h2>Player Subscription</h2>
+            <label for="newPlayerId">Player ID</label>
+            <input id="newPlayerId" type="text" placeholder="Enter your player ID" />
+            <button id="addPlayerBtn">Add Player</button>
+          </div>
+
+          <div class="card action-card">
+            <h2>Admin Controls</h2>
+            <label for="removePlayerSelect">Select Player to Remove</label>
+            <select id="removePlayerSelect">
+              <option value="">-- Choose player --</option>
+            </select>
+            <button id="removePlayerBtn">Remove Player</button>
+          </div>
+
+          <div class="card action-card">
+            <h2>Gift Code Actions</h2>
+            <button id="fetchCodesBtn">Fetch Gift Codes</button>
+            <button id="redeemCodesBtn">Apply Gift Codes to All Players</button>
+            <button id="refreshBtn">Refresh Data</button>
+          </div>
+
+          <div class="card status-card">
+            <h2>Activity Log</h2>
+            <div id="statusText" class="status-text">Ready.</div>
+            <div class="progress-wrapper">
+              <div id="progressBar" class="progress-bar"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-grid">
+          <div class="card table-card">
+            <h2>Subscribed Players</h2>
+            <div class="table-container">
+              <table id="playersTable">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Nickname</th>
+                    <th>Stove Lv.</th>
+                    <th>State</th>
+                    <th>Redeemed?</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card codes-card">
+            <h2>Available Gift Codes</h2>
+            <div id="giftcodesList" class="giftcodes-list">
+              <p>No gift codes available.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span>Author: <a href="https://github.com/JouhC" target="_blank" rel="noreferrer">Jouh</a></span>
+        <span id="pageDate"></span>
+      </footer>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
