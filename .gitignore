@@ -160,3 +160,10 @@ cython_debug/
 #.idea/
 
 requirements.in
+
+# Node.js
+node_modules/
+npm-debug.log*
+
+# Vite build output
+dist/
