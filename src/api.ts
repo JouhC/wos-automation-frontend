@@ -2,7 +2,8 @@ export type Player = {
   fid: number;
   avatar_image?: string;
   nickname: string;
-  stove_lv: string | number;
+  stove_lv?: string | number;
+  stove_lv_content?: string;
   kid: string | number;
   redeemed_all: number | boolean | string;
 };

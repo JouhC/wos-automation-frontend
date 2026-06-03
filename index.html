@@ -6,11 +6,18 @@
     <title>Whiteout Survival Redeem Code Subscription</title>
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
-  <body>
+  <body class="dark">
     <div class="page-shell">
       <header class="hero">
-        <h1>Whiteout Survival Redeem Code Subscription</h1>
-        <p>Automatically redeem official gift codes and manage subscribed players from a static frontend.</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <div>
+            <h1>Whiteout Survival Redeem Code Subscription</h1>
+            <p>Automatically redeem official gift codes and manage subscribed players from a static frontend.</p>
+          </div>
+          <div>
+            <button id="themeToggle" class="theme-toggle">Toggle Theme</button>
+          </div>
+        </div>
       </header>
 
       <main>
@@ -38,25 +45,27 @@
             <button id="refreshBtn">Refresh Data</button>
           </div>
 
-          <div class="card status-card">
-            <h2>Activity Log</h2>
-            <div id="statusText" class="status-text">Ready.</div>
-            <div class="progress-wrapper">
-              <div id="progressBar" class="progress-bar"></div>
-            </div>
-          </div>
+        </section>
         </section>
 
         <section class="content-grid">
           <div class="card table-card">
-            <h2>Subscribed Players</h2>
+            <div class="table-top">
+              <h2>Subscribed Players</h2>
+              <div class="status-area">
+                <div id="statusText" class="status-text">Ready.</div>
+                <div class="progress-wrapper">
+                  <div id="progressBar" class="progress-bar"></div>
+                </div>
+              </div>
+            </div>
             <div class="table-container">
               <table id="playersTable">
                 <thead>
                   <tr>
                     <th></th>
                     <th>Nickname</th>
-                    <th>Stove Lv.</th>
+                    <th>Level</th>
                     <th>State</th>
                     <th>Redeemed?</th>
                   </tr>
