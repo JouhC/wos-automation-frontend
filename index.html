@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Whiteout Survival Redeem Code Subscription</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
   <body class="dark sidebar-hidden">
@@ -16,7 +17,14 @@
             <span></span>
           </button>
           <div class="hero-copy">
-            <h1>Whiteout Survival Redeem Code Subscription</h1>
+            <div class="brand-badge">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M12 2.75l7.07 4.07v8.36L12 21.25 4.93 15.18V6.82L12 2.75z" fill="currentColor" opacity="0.18"/>
+                <path d="M12 4.5l5.66 3.26v6.48L12 19.5 6.34 14.24V7.76L12 4.5m0-1.75L4 8.5v7L12 21.5l8-5.99v-7L12 2.75z" fill="currentColor"/>
+              </svg>
+              <span>Whiteout</span>
+            </div>
+            <h1>Redeem Code Subscription</h1>
             <p>Automatically redeem official gift codes and manage subscribed players with a sleek dashboard experience.</p>
           </div>
           <button id="themeToggle" class="theme-toggle">Switch to Light</button>
@@ -40,19 +48,18 @@
             </select>
             <button id="removePlayerBtn">Remove Player</button>
           </div>
-
-          <div class="card action-card">
-            <h2>Gift Code Actions</h2>
-            <button id="fetchCodesBtn">Fetch Gift Codes</button>
-            <button id="redeemCodesBtn">Apply Gift Codes to All Players</button>
-            <button id="refreshBtn">Refresh Data</button>
-          </div>
         </section>
 
         <section class="content-grid">
           <div class="card table-card">
             <div class="table-top">
-              <h2>Subscribed Players</h2>
+              <div class="table-header-section">
+                <h2>Subscribed Players</h2>
+                <div class="action-buttons">
+                  <button id="redeemCodesBtn" class="btn btn-primary">Apply Latest Codes</button>
+                  <button id="refreshBtn" class="btn btn-secondary">Refresh</button>
+                </div>
+              </div>
               <div class="status-area">
                 <div id="statusText" class="status-text">Ready.</div>
                 <div class="progress-wrapper">
@@ -106,7 +113,10 @@
               </div>
 
             <div class="card codes-card">
-              <h2>Available Gift Codes</h2>
+              <div class="codes-header">
+                <h2>Available Gift Codes</h2>
+                <button id="fetchCodesBtn" class="btn btn-secondary">Fetch Gift Codes</button>
+              </div>
               <div id="giftcodesList" class="giftcodes-list">
                 <p>No gift codes available.</p>
               </div>
