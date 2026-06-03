@@ -24,6 +24,14 @@ This repository has been migrated from a Streamlit front-end to a static TypeScr
 npm run build
 ```
 
+## Deploy on Render
+Use a Static Site with these build settings:
+
+- Build Command: `npm ci && npm run build`
+- Publish Directory: `dist`
+
+The included `render.yaml` defines the same settings as a Render Blueprint.
+
 ## Project structure
 - `index.html` — static page shell
 - `src/main.ts` — frontend logic and UI behavior
