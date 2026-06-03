@@ -24,6 +24,7 @@ const elements = {
   giftcodesList: document.getElementById('giftcodesList') as HTMLDivElement,
   pageDate: document.getElementById('pageDate') as HTMLSpanElement,
   themeToggle: document.getElementById('themeToggle') as HTMLButtonElement,
+  sidebarToggle: document.getElementById('sidebarToggle') as HTMLButtonElement,
 };
 
 let activeTaskTimer: number | null = null;
@@ -83,6 +84,73 @@ function toggleTheme() {
   applyTheme(current === 'dark' ? 'light' : 'dark');
 }
 
+function toggleSidebar() {
+  // Toggle hiding the left sidebar only; keep other columns/layout intact
+  const hidden = document.body.classList.toggle('sidebar-hidden');
+  if (elements.sidebarToggle) {
+    elements.sidebarToggle.setAttribute('aria-expanded', String(!hidden));
+    if (hidden) {
+      elements.sidebarToggle.classList.remove('open');
+    } else {
+      elements.sidebarToggle.classList.add('open');
+    }
+  }
+}
+
+function isImageUrl(value: string) {
+  const trimmed = String(value).trim();
+  if (!trimmed) return false;
+  if (trimmed.startsWith('data:image/')) return true;
+
+  try {
+    const url = new URL(trimmed);
+    if (/\.(?:png|jpe?g|gif|webp|svg)(?:[?#].*)?$/i.test(url.pathname)) {
+      return true;
+    }
+    if (/\/(?:avatar|icon|img|image)\//i.test(url.pathname)) {
+      return true;
+    }
+  } catch (_) {
+    return false;
+  }
+
+  return false;
+}
+
+function renderLevelCell(player: Player): HTMLTableCellElement {
+  const cell = document.createElement('td');
+  const content = player.stove_lv_content ?? player.stove_lv;
+  const text = String(content ?? '').trim();
+
+  if (!text) {
+    cell.textContent = '—';
+    return cell;
+  }
+
+  if (isImageUrl(text)) {
+    const icon = document.createElement('img');
+    icon.className = 'level-badge';
+    icon.src = text;
+    icon.alt = `Level ${player.stove_lv ?? ''}`.trim();
+    icon.loading = 'lazy';
+    icon.onerror = () => {
+      icon.src = 'https://via.placeholder.com/56?text=LV';
+    };
+    cell.appendChild(icon);
+    return cell;
+  }
+
+  if (text.startsWith('<') && text.includes('img')) {
+    cell.innerHTML = text;
+    const maybeImg = cell.querySelector('img');
+    if (maybeImg) maybeImg.classList.add('level-badge');
+    return cell;
+  }
+
+  cell.textContent = text;
+  return cell;
+}
+
 function createPlayerRow(player: Player): HTMLTableRowElement {
   const row = document.createElement('tr');
 
@@ -99,13 +167,7 @@ function createPlayerRow(player: Player): HTMLTableRowElement {
   const nicknameCell = document.createElement('td');
   nicknameCell.textContent = String(player.nickname);
 
-  const stoveCell = document.createElement('td');
-  // Prefer `stove_lv_content` (may include an image + level HTML), fall back to `stove_lv`
-  if (player.stove_lv_content) {
-    stoveCell.innerHTML = String(player.stove_lv_content);
-  } else {
-    stoveCell.textContent = String(player.stove_lv ?? '—');
-  }
+  const stoveCell = renderLevelCell(player);
 
   const kidCell = document.createElement('td');
   kidCell.textContent = String(player.kid ?? '—');
@@ -316,6 +378,9 @@ function bindEvents() {
   if (elements.themeToggle) {
     elements.themeToggle.addEventListener('click', toggleTheme);
   }
+  if (elements.sidebarToggle) {
+    elements.sidebarToggle.addEventListener('click', toggleSidebar);
+  }
 }
 
 function initializeDate() {
@@ -331,8 +396,52 @@ function initializeDate() {
 async function init() {
   initTheme();
   bindEvents();
+  // initialize sidebar toggle visual state
+  if (elements.sidebarToggle) {
+    elements.sidebarToggle.classList.toggle('open', !document.body.classList.contains('sidebar-hidden'));
+    elements.sidebarToggle.setAttribute('aria-expanded', String(!document.body.classList.contains('sidebar-hidden')));
+  }
   initializeDate();
   await refreshData();
+
+  // Entrance animation for LinkedIn CTA and ripple handlers for CTAs
+  try {
+    const linkedin = document.querySelector('.linkedin-cta') as HTMLAnchorElement | null;
+    const github = document.querySelector('.github-cta') as HTMLAnchorElement | null;
+
+    if (linkedin) {
+      // trigger entrance animation shortly after load
+      window.setTimeout(() => linkedin.classList.add('animate-in'), 220);
+
+      linkedin.addEventListener('click', (ev) => {
+        createRipple(ev, linkedin);
+      });
+    }
+
+    if (github) {
+      github.addEventListener('click', (ev) => {
+        createRipple(ev, github);
+      });
+    }
+  } catch (err) {
+    // non-fatal UI enhancements
+    console.debug('CTA enhancements failed:', err);
+  }
+}
+
+function createRipple(ev: MouseEvent, el: HTMLElement) {
+  const rect = el.getBoundingClientRect();
+  const x = ev.clientX - rect.left;
+  const y = ev.clientY - rect.top;
+  const ripple = document.createElement('span');
+  ripple.className = 'cta-ripple';
+  ripple.style.left = `${x}px`;
+  ripple.style.top = `${y}px`;
+  el.appendChild(ripple);
+  // remove after animation
+  window.setTimeout(() => {
+    ripple.remove();
+  }, 700);
 }
 
 init().catch((error) => {
