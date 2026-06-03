@@ -22,7 +22,6 @@ const elements = {
   progressBar: document.getElementById('progressBar') as HTMLDivElement,
   playersTableBody: document.querySelector('#playersTable tbody') as HTMLTableSectionElement,
   giftcodesList: document.getElementById('giftcodesList') as HTMLDivElement,
-  pageDate: document.getElementById('pageDate') as HTMLSpanElement,
   themeToggle: document.getElementById('themeToggle') as HTMLButtonElement,
   sidebarToggle: document.getElementById('sidebarToggle') as HTMLButtonElement,
 };
@@ -383,16 +382,6 @@ function bindEvents() {
   }
 }
 
-function initializeDate() {
-  const now = new Date();
-  const formatted = now.toLocaleDateString(undefined, {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
-  elements.pageDate.textContent = `Date: ${formatted}`;
-}
-
 async function init() {
   initTheme();
   bindEvents();
@@ -401,7 +390,6 @@ async function init() {
     elements.sidebarToggle.classList.toggle('open', !document.body.classList.contains('sidebar-hidden'));
     elements.sidebarToggle.setAttribute('aria-expanded', String(!document.body.classList.contains('sidebar-hidden')));
   }
-  initializeDate();
   await refreshData();
 
   // Entrance animation for LinkedIn CTA and ripple handlers for CTAs
