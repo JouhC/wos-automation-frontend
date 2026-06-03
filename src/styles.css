@@ -402,15 +402,22 @@ tbody tr:hover {
   margin-top: 36px;
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   gap: 16px;
   color: #94a3b8;
   font-size: 0.95rem;
+  line-height: 1.5;
 }
 
 .footer a {
   color: inherit;
   text-decoration: none;
   font-weight: 600;
+}
+
+.footer-note {
+  max-width: 620px;
+  text-align: right;
 }
 
 /* Dark / night mode */
@@ -733,15 +740,22 @@ th {
   margin-top: 36px;
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   gap: 16px;
   color: #94a3b8;
   font-size: 0.95rem;
+  line-height: 1.5;
 }
 
 .footer a {
   color: inherit;
   text-decoration: none;
   font-weight: 600;
+}
+
+.footer-note {
+  max-width: 620px;
+  text-align: right;
 }
 
 body.dark .card {
@@ -934,18 +948,362 @@ body.right-hidden .content-grid {
   box-shadow: none;
 }
 
-  @media (max-width: 960px) {
+@media (max-width: 960px) {
   main {
     grid-template-columns: 1fr;
   }
+
+  body.sidebar-hidden main {
+    grid-template-columns: 1fr;
+  }
+
   .content-grid {
     grid-template-columns: 1fr;
   }
+
+  body:not(.sidebar-hidden) .right-panel,
+  body.right-hidden .right-panel {
+    position: static;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+
   .sidebar {
     position: relative;
+    width: auto;
+    top: auto;
+  }
+
+  body:not(.sidebar-hidden) .sidebar {
     transform: translateX(0) !important;
     opacity: 1 !important;
     pointer-events: auto !important;
-    width: auto;
+  }
+
+  body.sidebar-hidden .sidebar {
+    display: none;
+  }
+
+  .sidebar-toggle {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  :root {
+    background: #050816;
+  }
+
+  .page-shell {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .hero {
+    margin-bottom: 14px;
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .hero-header {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 12px;
+  }
+
+  .hero-copy {
+    min-width: 0;
+  }
+
+  .brand-badge {
+    margin-bottom: 10px;
+    padding: 6px 10px;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+  }
+
+  .hero h1 {
+    margin-bottom: 8px;
+    font-size: 1.7rem;
+    line-height: 1.08;
+  }
+
+  .hero p {
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
+
+  .sidebar-toggle {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+  }
+
+  .theme-toggle {
+    grid-column: 1 / -1;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  main,
+  .content-grid,
+  .right-panel,
+  .sidebar {
+    gap: 14px;
+  }
+
+  .card {
+    border-radius: 16px;
+    padding: 16px;
+  }
+
+  .table-card {
+    border-radius: 16px;
+    min-width: 0;
+  }
+
+  .table-top {
+    display: grid;
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .table-header-section,
+  .status-area {
+    min-width: 0;
+  }
+
+  .action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .action-buttons .btn {
+    min-width: 0;
+    max-width: none;
+    width: 100%;
+  }
+
+  .btn {
+    min-height: 44px;
+    padding: 10px 12px;
+    font-size: 0.82rem;
+    letter-spacing: 0.02em;
+  }
+
+  .status-text {
+    min-height: 0;
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .table-container {
+    overflow-x: visible;
+    min-width: 0;
+  }
+
+  table {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tbody {
+    display: grid;
+    gap: 12px;
+    padding: 0 16px 16px;
+    width: 100%;
+  }
+
+  tr {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 10px 14px;
+    padding: 14px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    width: 100%;
+    min-width: 0;
+  }
+
+  th,
+  td {
+    display: block;
+    padding: 0;
+    border-bottom: 0;
+    min-width: 0;
+  }
+
+  td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+    color: #e2e8f0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  td::before {
+    color: #94a3b8;
+    flex: 0 0 auto;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  td:nth-child(1) {
+    grid-row: span 4;
+    justify-content: center;
+    align-items: start;
+  }
+
+  td:nth-child(1)::before {
+    content: none;
+  }
+
+  td:nth-child(2)::before {
+    content: 'Name';
+  }
+
+  td:nth-child(3)::before {
+    content: 'Level';
+  }
+
+  td:nth-child(4)::before {
+    content: 'State';
+  }
+
+  td:nth-child(5)::before {
+    content: 'Redeemed';
+  }
+
+  .avatar {
+    width: 52px;
+    height: 52px;
+  }
+
+  .level-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    padding: 6px;
+  }
+
+  .empty-cell {
+    grid-column: 1 / -1;
+    padding: 18px;
+    justify-content: center;
+  }
+
+  .empty-cell::before {
+    content: none;
+  }
+
+  .profile-card,
+  .codes-card {
+    padding: 16px;
+  }
+
+  .profile-media {
+    align-items: flex-start;
+  }
+
+  .profile-avatar {
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
+    flex: 0 0 auto;
+  }
+
+  .profile-summary h3 {
+    font-size: 1.2rem;
+  }
+
+  .linkedin-cta {
+    min-height: 56px;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+  }
+
+  .linkedin-cta svg {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 auto;
+  }
+
+  .linkedin-cta span {
+    padding-left: 0;
+  }
+
+  .github-cta {
+    height: 56px;
+  }
+
+  .codes-header {
+    display: grid;
+    gap: 10px;
+  }
+
+  .codes-header button {
+    width: 100%;
+    min-height: 42px;
+    white-space: normal;
+  }
+
+  .giftcode {
+    border-radius: 12px;
+    overflow-wrap: anywhere;
+  }
+
+  .footer {
+    margin-top: 20px;
+    display: grid;
+    gap: 8px;
+    font-size: 0.88rem;
+  }
+
+  .footer-note {
+    max-width: none;
+    text-align: left;
+  }
+}
+
+@media (max-width: 420px) {
+  .page-shell {
+    padding: 8px;
+  }
+
+  .hero,
+  .card,
+  .table-card {
+    border-radius: 14px;
+  }
+
+  .action-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  tr {
+    grid-template-columns: 48px 1fr;
+    padding: 12px;
+  }
+
+  tbody {
+    padding: 0 12px 12px;
+  }
+
+  .avatar {
+    width: 46px;
+    height: 46px;
   }
 }
