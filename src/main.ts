@@ -27,6 +27,17 @@ const elements = {
 };
 
 let activeTaskTimer: number | null = null;
+const exemptRemovePlayerFids = parseFidSet(import.meta.env.VITE_EXEMPT_REMOVE_PLAYER_FIDS);
+
+function parseFidSet(value: string | undefined): Set<string> {
+  return new Set(
+    String(value ?? '')
+      .replace(/[\[\]"']/g, '')
+      .split(',')
+      .map((fid) => fid.trim())
+      .filter(Boolean),
+  );
+}
 
 function setStatus(message: string, kind: 'info' | 'success' | 'error' = 'info') {
   elements.statusText.textContent = message;
@@ -208,10 +219,10 @@ function updateGiftCodesList(codes: string[]) {
 
 function updateRemovePlayerOptions(players: Player[]) {
   elements.removePlayerSelect.innerHTML = '<option value="">-- Choose player --</option>';
-  players.forEach((player) => {
+  players.filter((player) => !exemptRemovePlayerFids.has(String(player.fid))).forEach((player) => {
     const option = document.createElement('option');
     option.value = String(player.fid);
-    option.textContent = `${player.nickname} (${player.fid})`;
+    option.textContent = String(player.nickname);
     elements.removePlayerSelect.appendChild(option);
   });
 }
@@ -266,10 +277,22 @@ async function handleRemovePlayer() {
     return;
   }
 
+  const password = window.prompt('Enter admin password to remove this player:');
+  if (password === null) {
+    setStatus('Player removal cancelled.');
+    return;
+  }
+
+  const adminPassword = password.trim();
+  if (!adminPassword) {
+    setStatus('Admin password cannot be empty.', 'error');
+    return;
+  }
+
   try {
     setLoading(true);
     setStatus('Removing player...');
-    await removePlayer(playerId);
+    await removePlayer(playerId, adminPassword);
     setStatus('Player removed successfully.', 'success');
     await refreshData();
   } catch (error) {
@@ -396,6 +419,7 @@ async function init() {
   try {
     const linkedin = document.querySelector('.linkedin-cta') as HTMLAnchorElement | null;
     const github = document.querySelector('.github-cta') as HTMLAnchorElement | null;
+    const support = document.querySelector('.support-cta') as HTMLAnchorElement | null;
 
     if (linkedin) {
       // trigger entrance animation shortly after load
@@ -409,6 +433,12 @@ async function init() {
     if (github) {
       github.addEventListener('click', (ev) => {
         createRipple(ev, github);
+      });
+    }
+
+    if (support) {
+      support.addEventListener('click', (ev) => {
+        createRipple(ev, support);
       });
     }
   } catch (err) {

@@ -15,10 +15,11 @@ const apiBase = import.meta.env.VITE_API_URL || import.meta.env.URL || window.lo
 async function safeFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
   const url = `${apiBase}${path}`;
   const response = await fetch(url, {
+    ...options,
     headers: {
       'Content-Type': 'application/json',
+      ...options.headers,
     },
-    ...options,
   });
 
   if (!response.ok) {
@@ -29,8 +30,9 @@ async function safeFetch<T>(path: string, options: RequestInit = {}): Promise<T>
   return response.json();
 }
 
-function post<T>(path: string, data?: unknown): Promise<T> {
+function post<T>(path: string, data?: unknown, options: RequestInit = {}): Promise<T> {
   return safeFetch<T>(path, {
+    ...options,
     method: 'POST',
     body: data ? JSON.stringify(data) : undefined,
   });
@@ -48,8 +50,12 @@ export async function createPlayer(playerId: string): Promise<ApiResponse<{ mess
   return post('/players/create/', { player_id: playerId });
 }
 
-export async function removePlayer(playerId: string): Promise<ApiResponse<{ message: string }>> {
-  return post('/players/remove/', { player_id: playerId });
+export async function removePlayer(playerId: string, adminPassword: string): Promise<ApiResponse<{ message: string }>> {
+  return post('/players/remove/', { player_id: playerId }, {
+    headers: {
+      'X-Admin-Password': adminPassword,
+    },
+  });
 }
 
 export async function expiredCheck(): Promise<ApiResponse<{ task_id?: string }>> {
