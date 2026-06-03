@@ -6,17 +6,20 @@
     <title>Whiteout Survival Redeem Code Subscription</title>
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
-  <body class="dark">
+  <body class="dark sidebar-hidden">
     <div class="page-shell">
       <header class="hero">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
-          <div>
+        <div class="hero-header">
+          <button id="sidebarToggle" class="sidebar-toggle" aria-label="Toggle sidebar" aria-expanded="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <div class="hero-copy">
             <h1>Whiteout Survival Redeem Code Subscription</h1>
-            <p>Automatically redeem official gift codes and manage subscribed players from a static frontend.</p>
+            <p>Automatically redeem official gift codes and manage subscribed players with a sleek dashboard experience.</p>
           </div>
-          <div>
-            <button id="themeToggle" class="theme-toggle">Toggle Theme</button>
-          </div>
+          <button id="themeToggle" class="theme-toggle">Switch to Light</button>
         </div>
       </header>
 
@@ -44,8 +47,6 @@
             <button id="redeemCodesBtn">Apply Gift Codes to All Players</button>
             <button id="refreshBtn">Refresh Data</button>
           </div>
-
-        </section>
         </section>
 
         <section class="content-grid">
@@ -75,10 +76,40 @@
             </div>
           </div>
 
-          <div class="card codes-card">
-            <h2>Available Gift Codes</h2>
-            <div id="giftcodesList" class="giftcodes-list">
-              <p>No gift codes available.</p>
+          <div class="right-panel">
+            <div class="card profile-card">
+                <div class="profile-media">
+                  <div class="profile-avatar">
+                    <img src="https://github.com/JouhC.png?size=160" alt="GitHub avatar" />
+                  </div>
+                  <div class="profile-summary">
+                    <span class="profile-label">LinkedIn Profile</span>
+                    <h3>Jouh</h3>
+                    <p class="profile-role">AI Engineer</p>
+                  </div>
+                </div>
+
+                <div class="profile-cta-grid">
+                  <a class="linkedin-cta" href="https://www.linkedin.com/in/jouhc/" target="_blank" rel="noreferrer" aria-label="Open LinkedIn profile">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                      <path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.5 8h4v13h-4V8zm7.5 0h3.8v1.8h.05c.53-1 1.84-2 3.8-2 4.06 0 4.8 2.68 4.8 6.16V21h-4v-5.46c0-1.3-.02-2.98-1.82-2.98-1.82 0-2.1 1.42-2.1 2.88V21h-4V8z" fill="currentColor"/>
+                    </svg>
+                    <span>View profile on LinkedIn</span>
+                  </a>
+
+                  <a class="github-cta" href="https://github.com/JouhC" target="_blank" rel="noreferrer" aria-label="Open GitHub profile">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.57.11.78-.25.78-.55 0-.27-.01-1-.02-1.96-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.27-1.69-1.27-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.75 1.18 1.75 1.18 1.02 1.75 2.68 1.25 3.33.96.1-.75.4-1.25.72-1.54-2.56-.29-5.26-1.28-5.26-5.71 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.18 1.18.92-.26 1.9-.39 2.88-.39.98 0 1.96.13 2.88.39 2.21-1.49 3.18-1.18 3.18-1.18.63 1.58.23 2.75.11 3.04.74.81 1.19 1.84 1.19 3.1 0 4.44-2.71 5.41-5.29 5.69.41.36.78 1.08.78 2.18 0 1.57-.01 2.84-.01 3.23 0 .3.21.67.79.55C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z" fill="currentColor"/>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+
+            <div class="card codes-card">
+              <h2>Available Gift Codes</h2>
+              <div id="giftcodesList" class="giftcodes-list">
+                <p>No gift codes available.</p>
+              </div>
             </div>
           </div>
         </section>
