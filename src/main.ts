@@ -23,6 +23,7 @@ const elements = {
   playersTableBody: document.querySelector('#playersTable tbody') as HTMLTableSectionElement,
   giftcodesList: document.getElementById('giftcodesList') as HTMLDivElement,
   pageDate: document.getElementById('pageDate') as HTMLSpanElement,
+  themeToggle: document.getElementById('themeToggle') as HTMLButtonElement,
 };
 
 let activeTaskTimer: number | null = null;
@@ -54,6 +55,34 @@ function setLoading(isLoading: boolean) {
   });
 }
 
+function applyTheme(theme: 'dark' | 'light') {
+  if (theme === 'dark') {
+    document.body.classList.add('dark');
+  } else {
+    document.body.classList.remove('dark');
+  }
+  try {
+    localStorage.setItem('theme', theme);
+  } catch (_) {}
+  if (elements.themeToggle) {
+    elements.themeToggle.textContent = theme === 'dark' ? 'Switch to Light' : 'Switch to Night';
+  }
+}
+
+function initTheme() {
+  let theme: 'dark' | 'light' = 'dark';
+  try {
+    const stored = localStorage.getItem('theme');
+    if (stored === 'light' || stored === 'dark') theme = stored;
+  } catch (_) {}
+  applyTheme(theme);
+}
+
+function toggleTheme() {
+  const current = document.body.classList.contains('dark') ? 'dark' : 'light';
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+}
+
 function createPlayerRow(player: Player): HTMLTableRowElement {
   const row = document.createElement('tr');
 
@@ -71,7 +100,12 @@ function createPlayerRow(player: Player): HTMLTableRowElement {
   nicknameCell.textContent = String(player.nickname);
 
   const stoveCell = document.createElement('td');
-  stoveCell.textContent = String(player.stove_lv ?? '—');
+  // Prefer `stove_lv_content` (may include an image + level HTML), fall back to `stove_lv`
+  if (player.stove_lv_content) {
+    stoveCell.innerHTML = String(player.stove_lv_content);
+  } else {
+    stoveCell.textContent = String(player.stove_lv ?? '—');
+  }
 
   const kidCell = document.createElement('td');
   kidCell.textContent = String(player.kid ?? '—');
@@ -279,6 +313,9 @@ function bindEvents() {
   elements.fetchCodesBtn.addEventListener('click', () => performTask('expired-check'));
   elements.redeemCodesBtn.addEventListener('click', () => performTask('automate-all'));
   elements.refreshBtn.addEventListener('click', refreshData);
+  if (elements.themeToggle) {
+    elements.themeToggle.addEventListener('click', toggleTheme);
+  }
 }
 
 function initializeDate() {
@@ -292,6 +329,7 @@ function initializeDate() {
 }
 
 async function init() {
+  initTheme();
   bindEvents();
   initializeDate();
   await refreshData();

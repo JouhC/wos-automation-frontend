@@ -46,6 +46,11 @@ main {
   gap: 24px;
 }
 
+/* Keep sidebar from stretching with the main content */
+main {
+  align-items: start;
+}
+
 .sidebar {
   display: grid;
   gap: 24px;
@@ -54,6 +59,7 @@ main {
 .content-grid {
   display: grid;
   gap: 24px;
+  grid-template-columns: 1fr 320px;
 }
 
 .card {
@@ -159,6 +165,66 @@ main {
   overflow-x: auto;
 }
 
+.table-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.status-area {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 220px;
+}
+
+/* Dark / night mode */
+body.dark {
+  background: #0b1220;
+  color: #e6eef8;
+}
+
+body.dark .card {
+  background: #0f1724;
+  box-shadow: 0 12px 32px rgba(2,8,23,0.6);
+}
+
+body.dark .hero {
+  box-shadow: none;
+}
+
+body.dark .status-text {
+  background: #071020;
+  color: #cfe8ff;
+}
+
+body.dark th, body.dark td {
+  border-bottom-color: rgba(255,255,255,0.04);
+}
+
+body.dark th {
+  background: rgba(255,255,255,0.02);
+  color: #e6eef8;
+}
+
+body.dark .giftcode {
+  background: rgba(255,255,255,0.02);
+  color: #dbeafe;
+}
+
+/* Theme toggle button in header */
+.theme-toggle {
+  margin-left: 12px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.06);
+  color: inherit;
+  border: none;
+  cursor: pointer;
+}
+
 .table-container {
   width: 100%;
   overflow-x: auto;
@@ -232,6 +298,9 @@ th {
 
 @media (max-width: 960px) {
   main {
+    grid-template-columns: 1fr;
+  }
+  .content-grid {
     grid-template-columns: 1fr;
   }
 }
