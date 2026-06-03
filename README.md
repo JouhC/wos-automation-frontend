@@ -10,11 +10,12 @@ This repository has been migrated from a Streamlit front-end to a static TypeScr
 ## Run locally
 1. Copy `.env.example` to `.env`.
 2. Set `VITE_API_URL` to your backend API URL.
-3. Install dependencies:
+3. Optional: set `VITE_EXEMPT_REMOVE_PLAYER_FIDS` to hide protected players from the remove dropdown.
+4. Install dependencies:
    ```bash
    npm install
    ```
-4. Start the dev server:
+5. Start the dev server:
    ```bash
    npm run dev
    ```
@@ -44,11 +45,10 @@ The included `render.yaml` defines the same settings as a Render Blueprint.
 - `GET /players`
 - `GET /giftcodes`
 - `POST /players/create/`
-- `POST /players/remove/`
+- `POST /players/remove/` - sends the prompted admin password in the `X-Admin-Password` header
 - `POST /tasks/expired-check/`
 - `POST /tasks/automate-all/`
 - `GET /tasks/{taskId}/`
 - `GET /tasks/inprogress/`
 
 > Note: The backend must support CORS for the deployed frontend origin.
-
