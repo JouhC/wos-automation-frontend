@@ -1,47 +1,56 @@
 # Whiteout Survival Redemption Frontend
 
-This repository has been migrated from a Streamlit front-end to a static TypeScript web application.
+This repository contains the frontend for a Whiteout Survival redemption automation system. It has been migrated from a Streamlit interface to a static TypeScript web application that calls backend REST endpoints directly from the browser.
 
-## What changed
+## What Changed
+
 - Replaced the Python/Streamlit UI with a Vite-powered TypeScript frontend.
-- The app now calls the same backend REST endpoints directly from the browser.
-- Added a responsive player table, gift code list, task progress tracking, and admin controls.
+- Kept the same backend integration model through REST endpoints.
+- Added a responsive player table, gift-code list, task progress tracking, and admin controls.
 
-## Run locally
+## Run Locally
+
 1. Copy `.env.example` to `.env`.
 2. Set `VITE_API_URL` to your backend API URL.
 3. Optional: set `VITE_EXEMPT_REMOVE_PLAYER_FIDS` to hide protected players from the remove dropdown.
 4. Install dependencies:
-   ```bash
-   npm install
-   ```
-5. Start the dev server:
-   ```bash
-   npm run dev
-   ```
 
-## Build for production
+```bash
+npm install
+```
+
+5. Start the dev server:
+
+```bash
+npm run dev
+```
+
+## Build For Production
+
 ```bash
 npm run build
 ```
 
-## Deploy on Render
-Use a Static Site with these build settings:
+## Deploy On Render
+
+Use a Render Static Site with these settings:
 
 - Build Command: `npm ci && npm run build`
 - Publish Directory: `dist`
 
 The included `render.yaml` defines the same settings as a Render Blueprint.
 
-## Project structure
-- `index.html` — static page shell
-- `src/main.ts` — frontend logic and UI behavior
-- `src/api.ts` — backend API client
-- `src/styles.css` — responsive styling
-- `vite.config.ts` — Vite development config
-- `.env.example` — environment variable template
+## Project Structure
 
-## Backend endpoints used
+- `index.html` - static page shell
+- `src/main.ts` - frontend logic and UI behavior
+- `src/api.ts` - backend API client
+- `src/styles.css` - responsive styling
+- `vite.config.ts` - Vite development config
+- `.env.example` - environment variable template
+
+## Backend Endpoints Used
+
 - `GET /players`
 - `GET /giftcodes`
 - `POST /players/create/`
@@ -51,4 +60,10 @@ The included `render.yaml` defines the same settings as a Render Blueprint.
 - `GET /tasks/{taskId}/`
 - `GET /tasks/inprogress/`
 
-> Note: The backend must support CORS for the deployed frontend origin.
+## Notes
+
+The backend must support CORS for the deployed frontend origin.
+
+## Portfolio Note
+
+This repository is included in my portfolio as the public frontend for an automation system with a separate backend core.
